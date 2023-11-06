@@ -115,7 +115,7 @@ public class Vaccin
         
         Functions functions = new Functions();
         string[] input = File.ReadAllLines(inputCSVPath);
-
+        
         try
         {
             ErrorHandle(input);
@@ -246,50 +246,51 @@ public class Vaccin
         {
             string[] input = line.Split(',');
 
-
+            
+            
             if (input.Length != 6)
             {
                 throw new FormatException("För få värden som är separerade med ,");
             }
-           
-            string personalNumberCheck = @"^\d{8}-\d{4}$|^\d{6}-\d{4}$|^\d{12}$|^\d{10}$"; 
-            
-            if (!Regex.IsMatch(input[0], personalNumberCheck) || !IsAllDigits(input[0]) || input[0] == null)
+
+            string personalNumberCheck = @"^\d{8}-\d{4}$|^\d{10}-\d{4}$|^\d{12}$|^\d{10}$";
+            string names = "^[a-zA-ZåäöÅÄÖ]+$";
+            string value = "^[01]$";
+
+            if (input[0] == null || !Regex.IsMatch(input[0], personalNumberCheck) || !IsAllDigits(input[0]))
             {
-                throw new FormatException($"Index 0.{input[0]} Felaktigt format på personummer. Accepterade format: YYYYMMDD-NNNN, YYMMDD-NNNN, YYYYMMDDNNNN, YYMMDDNNNN");
+                
+                throw new FormatException($"Index 0.{input[0]} Felaktigt format på personnummer. Accepterade format: YYYYMMDD-NNNN, YYMMDD-NNNN, YYYYMMDDNNNN, YYMMDDNNNN");
             }
 
-            string names = "^[a-zA-ZåäöÅÄÖ]+$";
 
-            if (!Regex.IsMatch(input[1], names) || input[1] == null)
+            if (input[1] == null || !Regex.IsMatch(input[1], names))
             {
                 throw new FormatException("Index 1. Efternamnetamnet är felaktigt. Accepterade tecken: A-Ö, a-ö");
             }
 
-            if (!Regex.IsMatch(input[2], names) || input[2] == null)
+            if (input[2] == null || !Regex.IsMatch(input[2], names))
             {
                 throw new FormatException("Index 2. Förnamnet är felaktig. Accepterade tecken: A-Ö, a-ö");
             }
 
-            string value = "^[01]$";
-
-            if (!Regex.IsMatch(input[3], value) || input[3] == null)
+            if (input[3] == null || !Regex.IsMatch(input[3], value))
             {
                 throw new FormatException("Index 3. Innehåller felaktigt värde. Accepterade värden: 0, 1");
             }
 
-            if (!Regex.IsMatch(input[4], value) || input[4] == null)
+            if (input[4] == null || !Regex.IsMatch(input[4], value))
             {
                 throw new FormatException("Index 4. Innehåller felaktigt värde. Accepterade värden: 0, 1");
             }
 
-            if (!Regex.IsMatch(input[5], value) || input[5] == null)
+            if (input[5] == null || !Regex.IsMatch(input[5], value))
             {
                 throw new FormatException("Index 5. Innehåller felaktigt värde. Accepterade värden: 0, 1");
             }
         }
-
     }
+
 
 
     public static int ShowMenu(string prompt, IEnumerable<string> options)
