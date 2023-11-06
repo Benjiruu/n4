@@ -24,7 +24,7 @@ public class Vaccin
         
         while (running)
         {
-            
+            Console.Clear();
             Console.WriteLine("Huvudmeny\n");
             Console.WriteLine($"Antal vaccindoser: {vaccinAmount}");
             Console.WriteLine($"Åldersgräns 18 år: {ageDisplay}");
@@ -70,7 +70,7 @@ public class Vaccin
                 Console.WriteLine("Antal vaccindoser uppdaterat till " + vaccinAmount);
                 Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
                 Console.ReadKey();
-                Console.Clear();
+               
                 break;
             }
             else
@@ -97,7 +97,7 @@ public class Vaccin
             Console.WriteLine("Ändrad till vaccinera personer under 18 år");
             Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
             Console.ReadKey();
-            Console.Clear();
+            
         }
         else
         {
@@ -106,7 +106,7 @@ public class Vaccin
             Console.WriteLine("Ändrad till vaccinera inte personer under 18 år");
             Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
             Console.ReadKey();
-            Console.Clear();
+            
         }
     }
 
@@ -137,6 +137,7 @@ public class Vaccin
                     Console.WriteLine("Skriver över utdatafilen..");
                     Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
                     Console.ReadKey();
+                    
                 }
                 else if (option == 1)
                 {
@@ -144,6 +145,7 @@ public class Vaccin
                     Console.WriteLine("Åtgärden avbröts.");
                     Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
                     Console.ReadKey();
+                    
                     return;
                 }
             }
@@ -178,11 +180,15 @@ public class Vaccin
 
             if (File.Exists(inputCSVPath))
             {
+                Console.WriteLine("Ny sökväg tillagt " + inputCSVPath);
+                Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
+                Console.ReadKey();
                 break;
             }
             else
             {
-                Console.WriteLine("Filen exiterar inte, testa igen!");
+                Console.WriteLine("Mappen existerar inte eller ogiltig sökväg, testa igen!");
+                
             }
         }
     }
@@ -195,23 +201,22 @@ public class Vaccin
             Console.Write("Välj ny sökväg för Utdata: ");
             string changeFileOutputPath = Console.ReadLine();
 
-            outdataCSVPath = changeFileOutputPath;
-
-            if (Directory.Exists(outdataCSVPath))
+            string containingDirectory = Path.GetDirectoryName(changeFileOutputPath);
+            if (!string.IsNullOrWhiteSpace(containingDirectory) && Directory.Exists(containingDirectory))
             {
-                Console.WriteLine($"Ny sökväg: {changeFileOutputPath}");
-                if (!File.Exists(outdataCSVPath))
-                {
-                    using (File.Create(outdataCSVPath)) { }
-                }
+                outdataCSVPath = changeFileOutputPath;
+                Console.WriteLine("Ny sökväg tillagt: " + outdataCSVPath);
+                Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
+                Console.ReadKey();
                 break;
             }
             else
             {
-                Console.WriteLine("Mappen existerar inte, testa igen!");
+                Console.WriteLine("Mappen existerar inte eller ogiltig sökväg, testa igen!");
             }
         }
     }
+
 
     private static void Exit()
     {
