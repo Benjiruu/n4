@@ -17,13 +17,14 @@ public class Vaccin
 
     private static string inputCSVPath = @"D:\2023\Progamering\C#\Inlamning4\NyaFiler\Test.csv";
     private static string outdataCSVPath = @"D:\2023\Progamering\C#\Inlamning4\NyaFiler\Vaccinations.csv";
+   
     public static void Main()
     {
 
-
+        
         while (running)
         {
-
+            
             Console.WriteLine("Huvudmeny\n");
             Console.WriteLine($"Antal vaccindoser: {vaccinAmount}");
             Console.WriteLine($"Åldersgräns 18 år: {ageDisplay}");
@@ -56,26 +57,34 @@ public class Vaccin
 
     public static void AddVaccinAmount()
     {
+        Console.Clear();
         while (true)
         {
+           
             Console.Write("Ändra antalet vaccindoser: ");
             string inputAmount = Console.ReadLine();
-
+            
             if (inputAmount != null && int.TryParse(inputAmount, out int result))
             {
                 vaccinAmount += result;
                 Console.WriteLine("Antal vaccindoser uppdaterat till " + vaccinAmount);
+                Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
+                Console.ReadKey();
+                Console.Clear();
                 break;
             }
             else
             {
                 Console.WriteLine("Skriv en hel siffra");
+         
             }
+            
         }
     }
 
     public static void ChangeAgeLimit()
     {
+        Console.Clear();
         int option = ShowMenu("Ändra Åldersgräns", new[]
         {
             "Sätt åldersgräns",
@@ -86,17 +95,24 @@ public class Vaccin
             ageLimit = true;
             ageDisplay = "Ja";
             Console.WriteLine("Ändrad till vaccinera personer under 18 år");
+            Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
+            Console.ReadKey();
+            Console.Clear();
         }
         else
         {
             ageLimit = false;
             ageDisplay = "Nej";
             Console.WriteLine("Ändrad till vaccinera inte personer under 18 år");
+            Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
+            Console.ReadKey();
+            Console.Clear();
         }
     }
 
     public static void CreatePriorityOrder()
     {
+        
         Functions functions = new Functions();
         string[] input = File.ReadAllLines(inputCSVPath);
 
@@ -117,13 +133,17 @@ public class Vaccin
 
                 if (option == 0)
                 {
-                    // User selected "Yes," proceed with overwriting
+                    // User selected "Ja," proceed with overwriting
                     Console.WriteLine("Skriver över utdatafilen..");
+                    Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
+                    Console.ReadKey();
                 }
                 else if (option == 1)
                 {
-                    // User selected "No," return to the main menu
-                    Console.WriteLine("Åtgärden avbröts.Återgår till huvudmenyn.");
+                    // User selected "Nej," return to the main menu
+                    Console.WriteLine("Åtgärden avbröts.");
+                    Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
+                    Console.ReadKey();
                     return;
                 }
             }
@@ -148,6 +168,7 @@ public class Vaccin
 
     public static void IndataFileSearchChange()
     {
+        Console.Clear();
         while (true)
         {
             Console.Write("Välj ny sökväg för Indata: ");
@@ -168,6 +189,7 @@ public class Vaccin
 
     public static void OutDataFileSearchChange()
     {
+        Console.Clear();
         while (true)
         {
             Console.Write("Välj ny sökväg för Utdata: ");
