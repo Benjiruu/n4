@@ -24,7 +24,7 @@ public class Vaccin
         
         while (running)
         {
-            Console.Clear();
+            
             Console.WriteLine("Huvudmeny\n");
             Console.WriteLine($"Antal vaccindoser: {vaccinAmount}");
             Console.WriteLine($"Åldersgräns 18 år: {ageDisplay}");
