@@ -64,6 +64,7 @@ public class Vaccin
             if (inputAmount != null && int.TryParse(inputAmount, out int result))
             {
                 vaccinAmount += result;
+                Console.WriteLine("Antal vaccindoser uppdaterat till " + vaccinAmount);
                 break;
             }
             else
@@ -106,23 +107,23 @@ public class Vaccin
             //Confirmation for the user to overwrite output file 
             if (File.Exists(outdataCSVPath))
             {
-                Console.WriteLine("The output file already exists.");
+                Console.WriteLine("Utgångsfilen finns redan.");
 
-                int option = ShowMenu("Do you want to overwrite it?", new[]
+                int option = ShowMenu("Vill du skriva över filen?", new[]
                 {
-                "Yes",
-                "No"
+                "Ja",
+                "Nej"
             });
 
                 if (option == 0)
                 {
                     // User selected "Yes," proceed with overwriting
-                    Console.WriteLine("Overwriting the output file...");
+                    Console.WriteLine("Skriver över utdatafilen..");
                 }
                 else if (option == 1)
                 {
                     // User selected "No," return to the main menu
-                    Console.WriteLine("Operation canceled. Returning to the main menu.");
+                    Console.WriteLine("Åtgärden avbröts.Återgår till huvudmenyn.");
                     return;
                 }
             }
@@ -137,7 +138,7 @@ public class Vaccin
             vaccinAmount -= totalDosesUsed;
 
             File.WriteAllLines(outdataCSVPath, outPut);
-            Console.WriteLine("Priority order has been created and saved.");
+            Console.WriteLine("Prioriteringsordning har skapats och sparats.");
         }
         catch (Exception ex)
         {

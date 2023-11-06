@@ -15,11 +15,16 @@ namespace VaccinAssigment
         {
             List<Person> persons = PersonsToList(input, ageLimit);
             List<VaccinPerson> transformedPersons = FilterAndTransformPersons(persons, doses);
-
+            
+            // Calculate the remaining doses
+            int remainingDoses = doses - transformedPersons.Sum(person => person.VaccinDose);
+            
             // Transform filtered persons to CSV lines
             string[] csvLines = transformedPersons.Select(person =>
                 $"{person.PersonalNumber},{person.LastName},{person.FirstName},{person.VaccinDose}")
                 .ToArray();
+
+            csvLines = csvLines.Append($"Remaining Doses: {remainingDoses}").ToArray();
 
             return csvLines;
         }
