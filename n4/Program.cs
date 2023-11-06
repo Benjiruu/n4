@@ -180,7 +180,7 @@ public class Vaccin
 
             if (File.Exists(inputCSVPath))
             {
-                Console.WriteLine("Ny sökväg tillagt " + inputCSVPath);
+                Console.WriteLine("Ny sökväg tillagt");
                 Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
                 Console.ReadKey();
                 break;
@@ -201,11 +201,10 @@ public class Vaccin
             Console.Write("Välj ny sökväg för Utdata: ");
             string changeFileOutputPath = Console.ReadLine();
 
-            string containingDirectory = Path.GetDirectoryName(changeFileOutputPath);
-            if (!string.IsNullOrWhiteSpace(containingDirectory) && Directory.Exists(containingDirectory))
+            if (File.Exists(changeFileOutputPath))
             {
                 outdataCSVPath = changeFileOutputPath;
-                Console.WriteLine("Ny sökväg tillagt: " + outdataCSVPath);
+                Console.WriteLine("Ny sökväg tillagt");
                 Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
                 Console.ReadKey();
                 break;
