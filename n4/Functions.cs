@@ -13,17 +13,83 @@ namespace VaccinAssigment
     {
         public string[] CreateVaccinationOrder(string[] input, int doses, bool ageLimit)
         {
-            List<Person> persons = PersonsToList(input, ageLimit);
-            List<VaccinPerson> transformedPersons = FilterAndTransformPersons(persons, doses);
+            List<Person> healthcareEmployees = new List<Person>();
+            List<Person> olderThan65 = new List<Person>();
+            List<Person> riskGroup = new List<Person>();
+            List<Person> remainingPersons = new List<Person>();
 
-            // Transform filtered persons to CSV lines
+            foreach (string personData in input)
+            {
+                string[] entries = personData.Split(',');
+
+                string personalNumber = entries[0];
+                string lastName = entries[1];
+                string firstName = entries[2];
+                int healthcareEmployee = int.Parse(entries[3]);
+                int risk = int.Parse(entries[4]);
+                int infection = int.Parse(entries[5]);
+
+                Person person = new Person
+                {
+                    PersonalNumber = personalNumber,
+                    LastName = lastName,
+                    FirstName = firstName,
+                    HealthcareEmployee = healthcareEmployee,
+                    RiskGroup = risk,
+                    Infection = infection,
+                };
+
+                if (ageLimit && BirthDate(personalNumber) < 18)
+                {
+                    continue;
+                }
+
+                if (healthcareEmployee == 1)
+                {
+                    healthcareEmployees.Add(person);
+                }
+                else if (BirthDate(personalNumber) >= 65)
+                {
+                    olderThan65.Add(person);
+                }
+                else if (risk == 1)
+                {
+                    riskGroup.Add(person);
+                }
+                else
+                {
+                    remainingPersons.Add(person);
+                }
+            }
+
+            healthcareEmployees = SortPersonsByAge(healthcareEmployees);
+            olderThan65 = SortPersonsByAge(olderThan65);
+            riskGroup = SortPersonsByAge(riskGroup);
+            remainingPersons = SortPersonsByAge(remainingPersons);
+
+            List<Person> allPersons = healthcareEmployees
+                .Concat(olderThan65)
+                .Concat(riskGroup)
+                .Concat(remainingPersons)
+                .ToList();
+
+            List<VaccinPerson> transformedPersons = FilterAndTransformPersons(allPersons, doses);
+
             string[] csvLines = transformedPersons.Select(person =>
                 $"{person.PersonalNumber},{person.LastName},{person.FirstName},{person.VaccinDose}")
                 .ToArray();
 
             return csvLines;
-
         }
+
+        private List<Person> SortPersonsByAge(List<Person> persons)
+        {
+            return persons
+                .OrderBy(person => BirthDate(person.PersonalNumber))
+                .ThenBy(person => person.PersonalNumber)
+                .ToList();
+        }
+
 
         private List<Person> PersonsToList(string[] input, bool ageLimit)
         {
