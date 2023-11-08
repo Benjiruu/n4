@@ -21,9 +21,9 @@ namespace Vaccination
     }
     public class VaccinPerson
     {
-        public string PersonalNumber { get; set; }
-        public string LastName { get; set; }
-        public string FirstName { get; set; }
+        public string VPersonalNumber { get; set; }
+        public string VLastName { get; set; }
+        public string VFirstName { get; set; }
         public int VaccinDose { get; set; }
     }
 }

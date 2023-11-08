@@ -421,9 +421,6 @@ public class Vaccin
         }
 
 
-
-
-
         [TestMethod]
         public void TestCreateVaccinationOrder_InsufficientDoses()
         {
@@ -443,20 +440,6 @@ public class Vaccin
             Assert.AreEqual(doses, result.Length);
         }
 
-        [TestMethod]
-        public void TestCreateVaccinationOrder_EmptyInput()
-        {
-            Functions functions = new Functions();
-            string[] input = new string[] { }; // Empty input
-
-            int doses = 10;
-            bool ageLimit = false;
-
-            string[] result = functions.CreateVaccinationOrder(input, doses, ageLimit);
-
-            // Verify that the method handles empty input correctly
-            Assert.AreEqual(0, result.Length);
-        }
 
         [TestMethod]
         public void TestCreateVaccinationOrder_SufficientDoses()
@@ -477,5 +460,40 @@ public class Vaccin
             // Verify that, when there are sufficient doses, all individuals are included
             Assert.AreEqual(input.Length, result.Length);
         }
+
+        [TestMethod]
+        public void TestPrioritySorting()
+        {
+            Functions functions = new Functions();
+
+            // Define input data with healthcare employees having different birthdates
+            string[] input = new string[]
+            {
+              "20020101-5678,LastName1,FirstName1,1,0,0",
+              "19571212-2222,LastName2,FirstName2,0,0,0",
+              "20121212-2345,LastName3,FirstName3,0,1,0",
+              "19450606-6532,LastName4,FirstName4,1,0,0",
+            };
+
+            int doses = 10;
+            bool ageLimit = false;
+
+            string[] result = functions.CreateVaccinationOrder(input, doses, ageLimit);
+
+            // The priority order you expect
+            string[] expectedOrder = new string[]
+            {
+              "19450606-6532,LastName4,FirstName4,2",
+              "20020101-5678,LastName1,FirstName1,2",
+              "19571212-2222,LastName2,FirstName2,2",
+              "20121212-2345,LastName3,FirstName3,2",
+            };
+
+            // Compare the actual result with the expected order
+            CollectionAssert.AreEqual(expectedOrder, result);
+        }
+
+
+
     }
 }

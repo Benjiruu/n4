@@ -62,11 +62,40 @@ namespace VaccinAssigment
                 }
             }
 
-            healthcareEmployees = SortPersonsByAge(healthcareEmployees);
-            olderThan65 = SortPersonsByAge(olderThan65);
-            riskGroup = SortPersonsByAge(riskGroup);
-            remainingPersons = SortPersonsByAge(remainingPersons);
+            // Sort each category individually
+            healthcareEmployees.Sort((a, b) =>
+            {
+                int ageComparison = BirthDate(a.PersonalNumber).CompareTo(BirthDate(b.PersonalNumber));
+                if (ageComparison == 0)
+                {
+                    return string.Compare(a.LastName, b.LastName, StringComparison.Ordinal);
+                }
+                return ageComparison;
+            });
 
+            olderThan65.Sort((a, b) => string.Compare(a.LastName, b.LastName, StringComparison.Ordinal));
+
+            riskGroup.Sort((a, b) =>
+            {
+                int ageComparison = BirthDate(a.PersonalNumber).CompareTo(BirthDate(b.PersonalNumber));
+                if (ageComparison == 0)
+                {
+                    return string.Compare(a.LastName, b.LastName, StringComparison.Ordinal);
+                }
+                return ageComparison;
+            });
+
+            remainingPersons.Sort((a, b) =>
+            {
+                int ageComparison = BirthDate(a.PersonalNumber).CompareTo(BirthDate(b.PersonalNumber));
+                if (ageComparison == 0)
+                {
+                    return string.Compare(a.LastName, b.LastName, StringComparison.Ordinal);
+                }
+                return ageComparison;
+            });
+
+            // Concatenate the lists in the desired order
             List<Person> allPersons = healthcareEmployees
                 .Concat(olderThan65)
                 .Concat(riskGroup)
@@ -76,19 +105,24 @@ namespace VaccinAssigment
             List<VaccinPerson> transformedPersons = FilterAndTransformPersons(allPersons, doses);
 
             string[] csvLines = transformedPersons.Select(person =>
-                $"{person.PersonalNumber},{person.LastName},{person.FirstName},{person.VaccinDose}")
+                $"{person.VPersonalNumber},{person.VLastName},{person.VFirstName},{person.VaccinDose}")
                 .ToArray();
 
             return csvLines;
         }
 
+
+
         private List<Person> SortPersonsByAge(List<Person> persons)
         {
-            return persons
-                .OrderBy(person => BirthDate(person.PersonalNumber))
-                .ThenBy(person => person.PersonalNumber)
-                .ToList();
+           return persons
+          .OrderBy(person => BirthDate(person.PersonalNumber))
+          .ThenBy(person => person.LastName)
+          .ThenBy(person => person.FirstName)
+          .ToList();
+
         }
+
 
 
         private List<Person> PersonsToList(string[] input, bool ageLimit)
@@ -130,31 +164,41 @@ namespace VaccinAssigment
 
         private List<VaccinPerson> FilterAndTransformPersons(List<Person> persons, int availableDoses)
         {
-            // Sort the unique persons
-            List<Person> filteredPersons = persons
-                .OrderBy(person => BirthDate(person.PersonalNumber))
-                .ThenBy(person => person.PersonalNumber)
-                .ToList();
-
             // Ensure the number of available doses does not exceed the required doses
-            if (availableDoses < filteredPersons.Count)
+            if (availableDoses < persons.Count)
             {
-                filteredPersons = filteredPersons.Take(availableDoses).ToList();
+                persons = persons.Take(availableDoses).ToList();
             }
 
-            // Transform filteredPersons to VaccinPerson objects
-            List<VaccinPerson> transformedPersons = filteredPersons
+            // Transform filteredPersons to VaccinPerson objects and apply sorting
+            List<VaccinPerson> transformedPersons = persons
+                .OrderBy(person =>
+                {
+                    if (person.HealthcareEmployee == 1)
+                        return 1; // Healthcare employees first
+                    else if (BirthDate(person.PersonalNumber) >= 65)
+                        return 2; // Age 65+ next
+                    else if (person.RiskGroup == 1)
+                        return 3; // Risk group
+                    else
+                        return 4; // Others
+                })
+                .ThenBy(person => BirthDate(person.PersonalNumber)) // Then sort by age
+                .ThenBy(person => person.LastName) // Then sort by last name
+                .ThenBy(person => person.FirstName) // Then sort by first name
                 .Select(person => new VaccinPerson
                 {
-                    PersonalNumber = person.PersonalNumber,
-                    LastName = person.LastName,
-                    FirstName = person.FirstName,
+                    VPersonalNumber = person.PersonalNumber,
+                    VLastName = person.LastName,
+                    VFirstName = person.FirstName,
                     VaccinDose = (2 - person.Infection) // Calculate the number of vaccine doses needed
                 })
                 .ToList();
 
             return transformedPersons;
         }
+
+
 
         private int BirthDate(string personalNumber)
         {
