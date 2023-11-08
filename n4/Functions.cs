@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.IO;
 using Vaccination;
+using System.Diagnostics;
 
 namespace VaccinAssigment
 {
@@ -28,6 +29,8 @@ namespace VaccinAssigment
                 int healthcareEmployee = int.Parse(entries[3]);
                 int risk = int.Parse(entries[4]);
                 int infection = int.Parse(entries[5]);
+
+                personalNumber = ConvertToCorrectFormat(personalNumber);
 
                 Person person = new Person
                 {
@@ -110,18 +113,33 @@ namespace VaccinAssigment
 
             return csvLines;
         }
-
-
-
-        private List<Person> SortPersonsByAge(List<Person> persons)
+        //converts to YYYYMMDD-NNNN format
+        public string ConvertToCorrectFormat(string personalNumber)
         {
-           return persons
-          .OrderBy(person => BirthDate(person.PersonalNumber))
-          .ThenBy(person => person.LastName)
-          .ThenBy(person => person.FirstName)
-          .ToList();
+            if (personalNumber.Length == 10 || personalNumber.Length == 11)
+            {
+                string yearPart = personalNumber.Substring(0, 2); // Extract the first two digits of the personal number
+                int year = int.Parse(yearPart);
 
+                if (year >= 0 && year <= 24)
+                {
+                    year += 2000; // Adjust for years between 00 and 22
+                }
+                else if (year >= 25 && year <= 99)
+                {
+                    year += 1900;
+                }
+
+                string fullYear = year.ToString("D4") + personalNumber.Substring(2, 4) + "-" + personalNumber.Substring(6); // Constructs the full year part
+
+                fullYear = fullYear.Replace("--", "-");
+
+                return fullYear;
+            }
+
+            return personalNumber;
         }
+
 
 
 
@@ -175,15 +193,15 @@ namespace VaccinAssigment
                 .OrderBy(person =>
                 {
                     if (person.HealthcareEmployee == 1)
-                        return 1; // Healthcare employees first
+                        return 0; // Healthcare employees first
                     else if (BirthDate(person.PersonalNumber) >= 65)
-                        return 2; // Age 65+ next
+                        return 1; // Age 65+ next
                     else if (person.RiskGroup == 1)
-                        return 3; // Risk group
+                        return 2; // Risk group
                     else
-                        return 4; // Others
+                        return 3; // Others
                 })
-                .ThenBy(person => BirthDate(person.PersonalNumber)) // Then sort by age
+                .ThenByDescending(person => BirthDate(person.PersonalNumber)) // Then sort by age
                 .ThenBy(person => person.LastName) // Then sort by last name
                 .ThenBy(person => person.FirstName) // Then sort by first name
                 .Select(person => new VaccinPerson

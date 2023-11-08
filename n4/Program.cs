@@ -17,14 +17,14 @@ public class Vaccin
 
     private static string inputCSVPath = @"D:\2023\Progamering\C#\Inlamning4\NyaFiler\Test.csv";
     private static string outdataCSVPath = @"D:\2023\Progamering\C#\Inlamning4\NyaFiler\Vaccinations.csv";
-   
+
     public static void Main()
     {
 
-        
+
         while (running)
         {
-            
+
             Console.WriteLine("Huvudmeny\n");
             Console.WriteLine($"Antal vaccindoser: {vaccinAmount}");
             Console.WriteLine($"Åldersgräns 18 år: {ageDisplay}");
@@ -60,25 +60,25 @@ public class Vaccin
         Console.Clear();
         while (true)
         {
-           
+
             Console.Write("Ändra antalet vaccindoser: ");
             string inputAmount = Console.ReadLine();
-            
+
             if (inputAmount != null && int.TryParse(inputAmount, out int result))
             {
                 vaccinAmount += result;
                 Console.WriteLine("Antal vaccindoser uppdaterat till " + vaccinAmount);
                 Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
                 Console.ReadKey();
-               
+
                 break;
             }
             else
             {
                 Console.WriteLine("Skriv en hel siffra");
-         
+
             }
-            
+
         }
     }
 
@@ -97,7 +97,7 @@ public class Vaccin
             Console.WriteLine("Ändrad till vaccinera personer under 18 år");
             Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
             Console.ReadKey();
-            
+
         }
         else
         {
@@ -106,16 +106,16 @@ public class Vaccin
             Console.WriteLine("Ändrad till vaccinera inte personer under 18 år");
             Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
             Console.ReadKey();
-            
+
         }
     }
 
     public static void CreatePriorityOrder()
     {
-        
+
         Functions functions = new Functions();
         string[] input = File.ReadAllLines(inputCSVPath);
-        
+
         try
         {
             ErrorHandle(input);
@@ -137,7 +137,7 @@ public class Vaccin
                     Console.WriteLine("Skriver över utdatafilen..");
                     Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
                     Console.ReadKey();
-                    
+
                 }
                 else if (option == 1)
                 {
@@ -145,7 +145,7 @@ public class Vaccin
                     Console.WriteLine("Åtgärden avbröts.");
                     Console.WriteLine("Klicka på Enter för att komma till huvudmeny");
                     Console.ReadKey();
-                    
+
                     return;
                 }
             }
@@ -188,7 +188,7 @@ public class Vaccin
             else
             {
                 Console.WriteLine("Mappen existerar inte eller ogiltig sökväg, testa igen!");
-                
+
             }
         }
     }
@@ -246,8 +246,8 @@ public class Vaccin
         {
             string[] input = line.Split(',');
 
-            
-            
+
+
             if (input.Length != 6)
             {
                 throw new FormatException("För få värden som är separerade med ,");
@@ -259,7 +259,7 @@ public class Vaccin
 
             if (input[0] == null || !Regex.IsMatch(input[0], personalNumberCheck) || !IsAllDigits(input[0]))
             {
-                
+
                 throw new FormatException($"Index 0.{input[0]} Felaktigt format på personnummer. Accepterade format: YYYYMMDD-NNNN, YYMMDD-NNNN, YYYYMMDDNNNN, YYMMDDNNNN");
             }
 
@@ -493,6 +493,31 @@ public class Vaccin
             CollectionAssert.AreEqual(expectedOrder, result);
         }
 
+        [TestMethod]
+        public void TestConvertToCorrectFormat()
+        {
+            Functions functions = new Functions();
+
+            // Test input formats with incorrect year parts
+            string[] testCases = new string[]
+            {
+               "9901011234",  // Incorrect year part (YYMMDDNNNN), should convert to 19990101-1234
+               "950101-1234",  // Incorrect year part (YYMMDD-NNNN), should convert to 19950101-1234
+            };
+
+            // Expected results
+            string[] expectedResults = new string[]
+            {
+               "19990101-1234",
+               "19950101-1234",
+            };
+
+            for (int i = 0; i < testCases.Length; i++)
+            {
+                string result = functions.ConvertToCorrectFormat(testCases[i]);
+                Assert.AreEqual(expectedResults[i], result);
+            }
+        }
 
 
     }
