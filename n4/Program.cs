@@ -394,7 +394,7 @@ public class Vaccin
             // Verify that the result has the correct length based on the provided input
             Assert.AreEqual(input.Length, result.Length);
 
-            // Verify that the expected individuals are included in the result
+            // Verify that the expected individuals are included in the result with 2 doses
             Assert.IsTrue(result.Contains("20010101-1234,LastName1,FirstName1,2"));
             Assert.IsTrue(result.Contains("20020101-5678,LastName2,FirstName2,2"));
         }
@@ -447,18 +447,21 @@ public class Vaccin
             Functions functions = new Functions();
             string[] input = new string[]
             {
-                "20010101-1234,LastName1,FirstName1,1,0,0",
-                "20020101-5678,LastName2,FirstName2,0,1,0",
-                "20030101-9876,LastName3,FirstName3,1,0,0"
+                "20010101-1234,LastName1,FirstName1,0,0,0",
+                "20020101-5678,LastName2,FirstName2,0,0,0",
+                "20030101-9876,LastName3,FirstName3,0,0,0"
             };
 
-            int doses = 3;  // Number of doses is sufficient for all individuals
+            int doses = 6;  // Number of doses is sufficient for all individuals
             bool ageLimit = false;
 
             string[] result = functions.CreateVaccinationOrder(input, doses, ageLimit);
 
             // Verify that, when there are sufficient doses, all individuals are included
             Assert.AreEqual(input.Length, result.Length);
+            Assert.IsTrue(result.Contains("20010101-1234,LastName1,FirstName1,2"));
+            Assert.IsTrue(result.Contains("20020101-5678,LastName2,FirstName2,2"));
+            Assert.IsTrue(result.Contains("20030101-9876,LastName3,FirstName3,2"));
         }
 
         [TestMethod]
